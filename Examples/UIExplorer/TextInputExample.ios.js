@@ -114,6 +114,71 @@ class RewriteExample extends React.Component {
   }
 }
 
+class SetSelectionRangeExample extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: props.value
+    };
+  }
+
+  getRandomPosition() {
+    var length = this.state.value.length;
+    return Math.round(Math.random() * length);
+  }
+
+  select(start, end) {
+    this.textInput.focus();
+    this.textInput.setSelectionRange(start, end);
+  }
+
+  selectRandom() {
+    var positions = [this.getRandomPosition(), this.getRandomPosition()].sort();
+    this.select(...positions);
+  }
+
+  placeAt(position) {
+    this.select(position, position);
+  }
+
+  placeAtRandom() {
+    this.placeAt(this.getRandomPosition());
+  }
+
+  render() {
+    var length = this.state.value.length;
+
+    return (
+      <View>
+        <TextInput
+          multiline={this.props.multiline}
+          onChangeText={(value) => this.setState({value})}
+          ref={textInput => this.textInput = textInput}
+          style={this.props.style}
+          value={this.state.value}
+        />
+        <View>
+          <Text onPress={this.placeAt.bind(this, 0)}>
+            Place at Start (0, 0)
+          </Text>
+          <Text onPress={this.placeAt.bind(this, length)}>
+            Place at End ({length}, {length})
+          </Text>
+          <Text onPress={this.placeAtRandom.bind(this)}>
+            Place at Random
+          </Text>
+          <Text onPress={this.select.bind(this, 0, length)}>
+            Select All
+          </Text>
+          <Text onPress={this.selectRandom.bind(this)}>
+            Select Random
+          </Text>
+        </View>
+      </View>
+    );
+  }
+}
+
 var styles = StyleSheet.create({
   page: {
     paddingBottom: 300,
@@ -434,6 +499,24 @@ exports.examples = [
             style={styles.multiline}>
             <View style={styles.multilineChild}/>
           </TextInput>
+        </View>
+      );
+    }
+  },
+  {
+    title: 'Set selection range',
+    render: function() {
+      return (
+        <View>
+          <SetSelectionRangeExample
+            style={styles.default}
+            value="text can be selected"
+          />
+          <SetSelectionRangeExample
+            multiline={true}
+            style={styles.multiline}
+            value={"multiline text\ncan also be selected"}
+          />
         </View>
       );
     }
